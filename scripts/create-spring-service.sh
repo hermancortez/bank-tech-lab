@@ -3,13 +3,14 @@ set -e
 
 SERVICE_NAME=$1
 BASE_PACKAGE=$2
+SERVICE_PORT=$3
 
-if [ -z "$SERVICE_NAME" ] || [ -z "$BASE_PACKAGE" ]; then
+if [ -z "$SERVICE_NAME" ] || [ -z "$BASE_PACKAGE" ] || [ -z "$SERVICE_PORT" ]; then
   echo "Uso:"
-  echo "./scripts/create-spring-service.sh <service-name> <base-package>"
+  echo "./scripts/create-spring-service.sh <service-name> <base-package> <port>"
   echo ""
   echo "Ejemplo:"
-  echo "./scripts/create-spring-service.sh customer-service cl.banktech.customer"
+  echo "./scripts/create-spring-service.sh account-service cl.banktech.account 8082"
   exit 1
 fi
 
@@ -25,12 +26,22 @@ mkdir -p "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/infrastructure/rest"
 mkdir -p "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/infrastructure/persistence"
 mkdir -p "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/infrastructure/messaging"
 mkdir -p "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/infrastructure/config"
+mkdir -p "$SERVICE_DIR/src/main/resources"
 mkdir -p "$SERVICE_DIR/src/test/java/$PACKAGE_DIR"
+
+mkdir -p "infra/kubernetes/$SERVICE_NAME"
+mkdir -p "docs/services/$SERVICE_NAME"
 
 cat > "$SERVICE_DIR/README.md" <<EOF
 # $SERVICE_NAME
 
 Microservicio Spring Boot basado en Arquitectura Hexagonal.
+
+## Puerto
+
+\`\`\`text
+$SERVICE_PORT
+\`\`\`
 
 ## Stack
 
@@ -64,13 +75,13 @@ WORKDIR /app
 
 COPY target/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE $SERVICE_PORT
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
 EOF
 
 cat > "$SERVICE_DIR/.env.example" <<EOF
-SERVER_PORT=8080
+SERVER_PORT=$SERVICE_PORT
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=bankdb
@@ -81,6 +92,33 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 EOF
 
+cat > "$SERVICE_DIR/src/main/resources/application.yml" <<EOF
+server:
+  port: $SERVICE_PORT
+
+spring:
+  application:
+    name: $SERVICE_NAME
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bankdb
+    username: bankuser
+    password: bankpass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+EOF
+
 cat > "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/package-info.java" <<EOF
 /**
  * $SERVICE_NAME base package.
@@ -88,4 +126,77 @@ cat > "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/package-info.java" <<EOF
 package $BASE_PACKAGE;
 EOF
 
-echo "Servicio $SERVICE_NAME inicializado con estructura hexagonal."
+cat > "infra/kubernetes/$SERVICE_NAME/deployment.yaml" <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $SERVICE_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $SERVICE_NAME
+  template:
+    metadata:
+      labels:
+        app: $SERVICE_NAME
+    spec:
+      containers:
+        - name: $SERVICE_NAME
+          image: $SERVICE_NAME:local
+          ports:
+            - containerPort: $SERVICE_PORT
+          env:
+            - name: SERVER_PORT
+              value: "$SERVICE_PORT"
+EOF
+
+cat > "infra/kubernetes/$SERVICE_NAME/service.yaml" <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: $SERVICE_NAME
+spec:
+  selector:
+    app: $SERVICE_NAME
+  ports:
+    - protocol: TCP
+      port: $SERVICE_PORT
+      targetPort: $SERVICE_PORT
+EOF
+
+cat > "docs/services/$SERVICE_NAME/README.md" <<EOF
+# $SERVICE_NAME
+
+## Responsabilidad
+
+Pendiente.
+
+## Casos de uso
+
+- Pendiente.
+
+## APIs
+
+- Pendiente.
+
+## Eventos publicados
+
+- Pendiente.
+
+## Eventos consumidos
+
+- Pendiente.
+
+## Dependencias
+
+- PostgreSQL
+- Kafka
+- Redis
+
+## Riesgos técnicos
+
+- Pendiente.
+EOF
+
+echo "Servicio $SERVICE_NAME inicializado con estructura hexagonal, documentación y Kubernetes."
