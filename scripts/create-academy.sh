@@ -11,6 +11,9 @@ create_file() {
 
   mkdir -p "$(dirname "$file")"
 
+  # La academia puede contener apuntes personales: nunca los sobrescribimos.
+  [ -f "$file" ] && return
+
   cat > "$file" <<EOF
 # $title
 
@@ -18,7 +21,7 @@ create_file() {
 
 Pendiente.
 
-## ¿Por qué existe?
+## ¿Por qué importa en banca?
 
 Pendiente.
 
@@ -30,23 +33,11 @@ Pendiente.
 
 Pendiente.
 
-## Ejemplo Java
+## Ejemplo práctico
 
 Pendiente.
 
-## Ejemplo Spring
-
-Pendiente.
-
-## Buenas prácticas
-
-Pendiente.
-
-## Malas prácticas
-
-Pendiente.
-
-## Preguntas de entrevista
+## Preguntas típicas de entrevista
 
 1. Pendiente.
 2. Pendiente.
@@ -163,5 +154,67 @@ create_file "$BASE_DIR/12-entrevistas/100-lider-tecnico.md" "100 Preguntas Líde
 create_file "$BASE_DIR/12-entrevistas/100-arquitecto.md" "100 Preguntas Arquitecto"
 
 create_file "$BASE_DIR/13-proyecto-final/README.md" "Proyecto Final Plataforma Bancaria"
+
+# Estructura objetivo solicitada. Nunca sobrescribe apuntes existentes.
+for name in README.md 01-como-ejecutar-spring.md 02-maven-vs-mvnw.md 03-estructura-proyecto-bancario.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/00-onboarding/$name" "$title"
+done
+
+for name in 01-java-7-vs-java-21.md 02-encapsulamiento.md 03-acoplamiento-cohesion.md 04-heap-stack.md 05-garbage-collector.md 06-threads.md 07-thread-pool.md 08-asincronia.md 09-collections.md 10-memory-leaks.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/01-java/$name" "$title"
+done
+
+for name in 01-spring-framework.md 02-spring-mvc.md 03-spring-boot.md 04-dependency-injection.md 05-spring-data-jpa.md 06-spring-security.md 07-transacciones.md 08-actuator.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/02-spring/$name" "$title"
+done
+
+for name in 01-oracle.md 02-jpa-hibernate.md 03-liquibase.md 04-connection-pool.md 05-indices-performance.md 06-procedures-functions.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/03-persistencia/$name" "$title"
+done
+
+for name in 01-angularjs.md 02-angular-7-11.md 03-session-storage.md 04-sesiones-base-datos.md 05-interceptors-guards.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/04-frontend-legado/$name" "$title"
+done
+
+for name in 01-jenkins.md 02-jenkinsfile.md 03-docker.md 04-kubernetes.md 05-kubectl-pods.md 06-deployments-services.md 07-ingress.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/05-devops/$name" "$title"
+done
+
+for name in 01-oci-conceptos.md 02-oci-vs-aws-azure-gcp.md 03-oke.md 04-vcn-subnets.md 05-load-balancer.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/06-cloud-oci/$name" "$title"
+done
+
+for name in 01-service-mesh.md 02-istio.md 03-gateway-virtualservice.md 04-destinationrule.md 05-mtls.md 06-canary.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/07-service-mesh/$name" "$title"
+done
+
+for name in 01-rest-api.md 02-openapi.md 03-openapi-vs-rest.md 04-versionado-api.md 05-api-gateway.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/08-apis/$name" "$title"
+done
+
+for name in 01-hexagonal.md 02-clean-architecture.md 03-ddd.md 04-cqrs.md 05-saga.md 06-outbox.md 07-microservicios.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/09-arquitectura/$name" "$title"
+done
+
+for name in 01-blueprints.md 02-golden-paths.md 03-arquetipos.md 04-roadmap-tecnologico.md 05-gobierno-tecnologico.md 06-referencia-arquitectonica.md 07-build-vs-buy.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/10-gobierno-tecnologico/$name" "$title"
+done
+
+for name in 01-preguntas-java.md 02-preguntas-spring.md 03-preguntas-kubernetes.md 04-preguntas-jenkins.md 05-preguntas-oracle.md 06-preguntas-arquitectura.md 07-preguntas-lider-tecnico.md; do
+  title="$(printf '%s' "${name%.md}" | sed -E 's/^[0-9]+-//; s/-/ /g')"
+  create_file "$BASE_DIR/11-entrevistas/$name" "$title"
+done
+
 
 echo "Academia creada correctamente en $BASE_DIR"

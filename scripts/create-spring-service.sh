@@ -32,6 +32,46 @@ mkdir -p "$SERVICE_DIR/src/test/java/$PACKAGE_DIR"
 mkdir -p "infra/kubernetes/$SERVICE_NAME"
 mkdir -p "docs/services/$SERVICE_NAME"
 
+cat > "$SERVICE_DIR/pom.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.3</version>
+    <relativePath/>
+  </parent>
+  <groupId>${BASE_PACKAGE%.*}</groupId>
+  <artifactId>$SERVICE_NAME</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <properties><java.version>21</java.version></properties>
+  <dependencies>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jpa</artifactId></dependency>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-validation</artifactId></dependency>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-actuator</artifactId></dependency>
+    <dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId><scope>runtime</scope></dependency>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>
+  </dependencies>
+  <build><plugins><plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin></plugins></build>
+</project>
+EOF
+
+cat > "$SERVICE_DIR/src/main/java/$PACKAGE_DIR/Application.java" <<EOF
+package $BASE_PACKAGE;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+EOF
+
 cat > "$SERVICE_DIR/README.md" <<EOF
 # $SERVICE_NAME
 
@@ -101,9 +141,9 @@ spring:
     name: $SERVICE_NAME
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/bankdb
-    username: bankuser
-    password: bankpass
+    url: jdbc:postgresql://\${DB_HOST:localhost}:\${DB_PORT:5432}/\${DB_NAME:bankdb}
+    username: \${DB_USER:bankuser}
+    password: \${DB_PASSWORD:bankpass}
     driver-class-name: org.postgresql.Driver
 
   jpa:
