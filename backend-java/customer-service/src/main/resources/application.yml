@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 8081
 
 spring:
   application:
@@ -15,9 +15,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,prometheus

@@ -1,8 +1,6 @@
 package cl.banktech.customer.infrastructure.persistence;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,9 +12,13 @@ public class CustomerEntity {
     @Id
     private UUID id;
 
+    @Column(nullable = false, unique = true)
     private String rut;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     protected CustomerEntity() {

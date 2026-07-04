@@ -2,26 +2,31 @@ package cl.banktech.customer.infrastructure.rest;
 
 import cl.banktech.customer.domain.model.Customer;
 import cl.banktech.customer.domain.port.in.CreateCustomerUseCase;
-import cl.banktech.customer.domain.port.out.CustomerRepositoryPort;
+import cl.banktech.customer.domain.port.in.GetCustomerUseCase;
+import cl.banktech.customer.domain.port.in.ListCustomersUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
 
     private final CreateCustomerUseCase createCustomerUseCase;
-    private final CustomerRepositoryPort repository;
+    private final ListCustomersUseCase listCustomersUseCase;
+    private final GetCustomerUseCase getCustomerUseCase;
 
     public CustomerController(
             CreateCustomerUseCase createCustomerUseCase,
-            CustomerRepositoryPort repository
+            ListCustomersUseCase listCustomersUseCase,
+            GetCustomerUseCase getCustomerUseCase
     ) {
         this.createCustomerUseCase = createCustomerUseCase;
-        this.repository = repository;
+        this.listCustomersUseCase = listCustomersUseCase;
+        this.getCustomerUseCase = getCustomerUseCase;
     }
 
     @PostMapping
@@ -38,10 +43,15 @@ public class CustomerController {
 
     @GetMapping
     public List<CustomerResponse> findAll() {
-        return repository.findAll()
+        return listCustomersUseCase.findAll()
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @GetMapping("/{id}")
+    public CustomerResponse findById(@PathVariable UUID id) {
+        return toResponse(getCustomerUseCase.findById(id));
     }
 
     private CustomerResponse toResponse(Customer customer) {

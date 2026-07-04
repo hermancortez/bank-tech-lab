@@ -5,6 +5,7 @@ import cl.banktech.customer.domain.port.out.CustomerRepositoryPort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -42,10 +43,9 @@ public class CustomerPersistenceAdapter implements CustomerRepositoryPort {
     }
 
     @Override
-    public Customer findById(UUID id) {
+    public Optional<Customer> findById(UUID id) {
         return repository.findById(id)
-                .map(this::toDomain)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+                .map(this::toDomain);
     }
 
     private CustomerEntity toEntity(Customer customer) {
