@@ -27,6 +27,14 @@ Construir una plataforma bancaria moderna aplicando:
 - `observability/`: Prometheus, Grafana y OpenTelemetry.
 - `docs/`: ADR, C4, Blueprints, Golden Paths y Roadmaps.
 
+## Kubernetes local
+
+El cluster local se opera con `kind`, `kubectl` y `k9s`.
+
+- Guia: `docs/infrastructure/KUBERNETES-LOCAL.md`
+- Contexto esperado: `kind-laboratorio`
+- Abrir consola visual: `k9s --context kind-laboratorio`
+
 ## Primer objetivo técnico
 
 Crear `customer-service` con:
