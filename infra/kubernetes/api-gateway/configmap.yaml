@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+data:
+  SERVER_PORT: "8080"
+  GATEWAY_ROUTES_CUSTOMER_SERVICE_URL: http://customer-service:8081
+  GATEWAY_ROUTES_ACCOUNT_SERVICE_URL: http://account-service:8082

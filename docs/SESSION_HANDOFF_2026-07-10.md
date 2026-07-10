@@ -149,9 +149,9 @@ Resultado:
 
 ## Siguientes pendientes
 
-1. Evaluar API Gateway para enrutar `customers` y `accounts`.
-2. Endurecer reglas de estado de cuenta para operaciones sobre cuentas bloqueadas o cerradas.
-3. Agregar auditoria/eventos para movimientos de cuenta.
+1. Endurecer reglas de estado de cuenta para operaciones sobre cuentas bloqueadas o cerradas.
+2. Agregar auditoria/eventos para movimientos de cuenta.
+3. Evaluar autenticacion/autorizacion en el gateway.
 
 ## Continuacion: account-service transaccional
 
@@ -175,3 +175,36 @@ Validaciones ejecutadas:
   - retirar `10.00`: balance `115.50`.
   - bloquear: status `BLOCKED`.
   - cerrar: status `CLOSED`.
+
+## Continuacion: api-gateway
+
+Se agrego `backend-java/api-gateway` como entrada HTTP unica para:
+
+- `/customers/** -> customer-service`
+- `/accounts/** -> account-service`
+
+Cambios realizados:
+
+- Servicio Spring Boot `api-gateway` en puerto `8080`.
+- Proxy REST con `RestTemplate`, preservando metodo/body/status y filtrando headers hop-by-hop.
+- Tests unitarios y de contexto para rutas, errores downstream y regresion de `Transfer-Encoding`.
+- Manifests Kubernetes para `api-gateway`.
+- Ingress publico movido a `api-gateway`.
+- Manifests de Ingress directos de `customer-service` y `account-service` retirados del repo.
+- CI actualizado para ejecutar tests del gateway.
+
+Validaciones ejecutadas:
+
+- `./mvnw test` en `backend-java/api-gateway`: 5 tests OK.
+- `./mvnw test` en `backend-java/customer-service`: 8 tests OK.
+- `./mvnw test` en `backend-java/account-service`: 12 tests OK.
+- `kubectl apply --dry-run=client --validate=false --recursive -f infra/kubernetes`: OK.
+- `git diff --check`: OK.
+- Rebuild de `api-gateway:local`, carga en Kind `laboratorio` y rollout de `deployment/api-gateway`: OK.
+- Se eliminaron los Ingress vivos `customer-service` y `account-service`.
+- Flujo E2E por gateway `bank.local`:
+  - `GET /actuator/health`: OK.
+  - `GET /customers`: OK.
+  - `GET /accounts`: OK.
+  - `POST /accounts`: OK.
+  - `POST /accounts/{id}/deposit`: balance actualizado a `60.00`.

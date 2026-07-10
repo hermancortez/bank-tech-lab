@@ -31,6 +31,10 @@ jobs:
         working-directory: backend-java/account-service
         run: ./mvnw test
 
+      - name: Run api-gateway tests
+        working-directory: backend-java/api-gateway
+        run: ./mvnw test
+
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
 

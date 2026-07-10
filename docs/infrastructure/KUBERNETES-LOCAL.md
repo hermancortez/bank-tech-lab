@@ -108,4 +108,9 @@ Validacion directa sin modificar `/etc/hosts`:
 curl -H 'Host: bank.local' http://localhost/actuator/health
 curl -H 'Host: bank.local' http://localhost/customers
 curl -H 'Host: bank.local' http://localhost/accounts
+curl -H 'Host: bank.local' http://localhost/actuator/health
 ```
+
+Con `api-gateway`, los paths publicos `/customers` y `/accounts` entran por
+`infra/kubernetes/api-gateway/ingress.yaml`. Los servicios internos se exponen
+solo via `ClusterIP`.
