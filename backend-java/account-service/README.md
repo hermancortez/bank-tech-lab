@@ -2,6 +2,21 @@
 
 Microservicio Spring Boot basado en Arquitectura Hexagonal.
 
+## Puerto
+
+```text
+8082
+```
+
+## API
+
+```text
+POST /accounts
+GET /accounts
+GET /accounts/{id}
+GET /accounts/customer/{customerId}
+```
+
 ## Stack
 
 - Java 21

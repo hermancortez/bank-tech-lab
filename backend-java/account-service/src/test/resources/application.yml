@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: account_service
+    show-sql: false
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    default-schema: account_service
+    schemas: account_service
+    table: flyway_schema_history_account
+
+management:
+  endpoints:
+    enabled-by-default: false

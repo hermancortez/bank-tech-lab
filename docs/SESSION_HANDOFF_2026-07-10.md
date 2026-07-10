@@ -52,7 +52,18 @@ Las pruebas de integracion usan PostgreSQL real mediante Testcontainers. Para Do
 
 - Se agrego GitHub Actions en `.github/workflows/customer-service-ci.yml`.
 - El workflow ejecuta `./mvnw test` para `customer-service`.
+- El workflow ejecuta `./mvnw test` para `account-service`.
 - El workflow valida manifests Kubernetes con `kubectl apply --dry-run=client --validate=false --recursive -f infra/kubernetes`.
+
+### Account Service
+
+- Se implemento `account-service` en puerto `8082`.
+- Se agregaron dominio, casos de uso, persistencia JPA, REST, Flyway y pruebas con Testcontainers.
+- Se agregaron manifests Kubernetes para configmap, deployment, service, ingress y plantilla de secret.
+- Se configuro `account-service` con schema PostgreSQL propio `account_service` y tabla Flyway `flyway_schema_history_account` para evitar colision con otros servicios en `bankdb`.
+- Se desplego en Kubernetes local con imagen `account-service:local`.
+- Se creo el secret local `account-service-secret` directamente en el cluster.
+- Se valido rollout exitoso, health `UP` y `/accounts` via Ingress con respuesta `200 []`.
 
 ## Validaciones realizadas
 
@@ -138,4 +149,5 @@ Resultado:
 
 ## Siguientes pendientes
 
-1. Implementar `account-service` como siguiente microservicio real.
+1. Evaluar API Gateway para enrutar `customers` y `accounts`.
+2. Agregar endpoints transaccionales de cuenta, como debito/credito/bloqueo.

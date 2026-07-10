@@ -1,4 +1,4 @@
-name: Customer Service CI
+name: Backend CI
 
 on:
   push:
@@ -25,6 +25,10 @@ jobs:
 
       - name: Run customer-service tests
         working-directory: backend-java/customer-service
+        run: ./mvnw test
+
+      - name: Run account-service tests
+        working-directory: backend-java/account-service
         run: ./mvnw test
 
       - name: Set up kubectl

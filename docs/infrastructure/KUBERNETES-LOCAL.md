@@ -107,4 +107,5 @@ Validacion directa sin modificar `/etc/hosts`:
 ```bash
 curl -H 'Host: bank.local' http://localhost/actuator/health
 curl -H 'Host: bank.local' http://localhost/customers
+curl -H 'Host: bank.local' http://localhost/accounts
 ```
