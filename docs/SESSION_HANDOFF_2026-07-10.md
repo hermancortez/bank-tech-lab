@@ -48,6 +48,12 @@ Las pruebas de integracion usan PostgreSQL real mediante Testcontainers. Para Do
 - Se actualizo:
   - `docs/infrastructure/KUBERNETES-LOCAL.md`
 
+### CI
+
+- Se agrego GitHub Actions en `.github/workflows/customer-service-ci.yml`.
+- El workflow ejecuta `./mvnw test` para `customer-service`.
+- El workflow valida manifests Kubernetes con `kubectl apply --dry-run=client --validate=false --recursive -f infra/kubernetes`.
+
 ## Validaciones realizadas
 
 ### Tests
@@ -132,5 +138,4 @@ Resultado:
 
 ## Siguientes pendientes
 
-1. Crear CI con `mvn test` y validacion de manifests.
-2. Implementar `account-service` como siguiente microservicio real.
+1. Implementar `account-service` como siguiente microservicio real.
