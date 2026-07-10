@@ -68,10 +68,19 @@ En el entorno local, `customer-service` usa PostgreSQL publicado en Docker media
 La configuracion del deployment esta separada en:
 
 - `configmap.yaml` para puerto y URL JDBC.
-- `secret.yaml` para usuario y password de base de datos.
+- `secret.yaml` para usuario y password de base de datos. Este archivo es local y no se versiona.
+- `secret.yaml.example` como plantilla versionada del secret.
 - `deployment.yaml` para la carga de trabajo y probes.
 - `service.yaml` para exponer el puerto dentro del cluster.
 - `ingress.yaml` para exponer rutas HTTP mediante `ingress-nginx`.
+
+Antes de aplicar los manifests por primera vez, crear el secret local:
+
+```bash
+cp infra/kubernetes/customer-service/secret.yaml.example infra/kubernetes/customer-service/secret.yaml
+```
+
+Luego editar `secret.yaml` con las credenciales locales de PostgreSQL.
 
 Luego se valida con:
 

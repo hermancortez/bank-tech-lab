@@ -35,7 +35,8 @@ Se agrego `CustomerControllerIntegrationTests` con cobertura para:
 
 - Se separo configuracion de `customer-service` en:
   - `configmap.yaml`
-  - `secret.yaml`
+  - `secret.yaml` local no versionado
+  - `secret.yaml.example` versionado como plantilla
 - El `deployment.yaml` ahora consume configuracion con `envFrom`.
 - Se mantiene `imagePullPolicy: Never` para imagen local cargada con `kind`.
 - Se agrego `ingress.yaml` para exponer `/customers` y `/actuator` mediante `ingress-nginx` con host `bank.local`.
@@ -129,7 +130,6 @@ Resultado:
 
 ## Siguientes pendientes
 
-1. Mover Secrets sensibles fuera del repo para un flujo mas realista.
-2. Agregar Testcontainers con PostgreSQL real.
-3. Crear CI con `mvn test` y validacion de manifests.
-4. Implementar `account-service` como siguiente microservicio real.
+1. Agregar Testcontainers con PostgreSQL real.
+2. Crear CI con `mvn test` y validacion de manifests.
+3. Implementar `account-service` como siguiente microservicio real.
