@@ -18,15 +18,11 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8081
-          env:
-            - name: SERVER_PORT
-              value: "8081"
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://host.docker.internal:5432/bankdb
-            - name: SPRING_DATASOURCE_USERNAME
-              value: bankuser
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: bankpass
+          envFrom:
+            - configMapRef:
+                name: customer-service-config
+            - secretRef:
+                name: customer-service-secret
           livenessProbe:
             httpGet:
               path: /actuator/health

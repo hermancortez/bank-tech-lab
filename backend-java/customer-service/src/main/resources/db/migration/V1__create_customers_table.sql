@@ -1,0 +1,7 @@
+CREATE TABLE customers (
+    id UUID PRIMARY KEY,
+    rut VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL
+);

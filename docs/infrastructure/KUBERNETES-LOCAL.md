@@ -65,6 +65,13 @@ kubectl apply -f infra/kubernetes/customer-service
 
 En el entorno local, `customer-service` usa PostgreSQL publicado en Docker mediante `host.docker.internal:5432`.
 
+La configuracion del deployment esta separada en:
+
+- `configmap.yaml` para puerto y URL JDBC.
+- `secret.yaml` para usuario y password de base de datos.
+- `deployment.yaml` para la carga de trabajo y probes.
+- `service.yaml` para exponer el puerto dentro del cluster.
+
 Luego se valida con:
 
 ```bash
