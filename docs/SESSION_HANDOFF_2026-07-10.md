@@ -38,6 +38,7 @@ Se agrego `CustomerControllerIntegrationTests` con cobertura para:
   - `secret.yaml`
 - El `deployment.yaml` ahora consume configuracion con `envFrom`.
 - Se mantiene `imagePullPolicy: Never` para imagen local cargada con `kind`.
+- Se agrego `ingress.yaml` para exponer `/customers` y `/actuator` mediante `ingress-nginx` con host `bank.local`.
 
 ### Documentacion
 
@@ -109,10 +110,26 @@ Resultado:
 - `deployment.apps/customer-service` en estado `1/1 READY`.
 - Logs de arranque limpios: Flyway valido 1 migracion, creo baseline sobre la base existente y dejo el schema actualizado.
 
+### Ingress
+
+Ejecutado:
+
+```bash
+kubectl apply -f infra/kubernetes/customer-service
+curl -H 'Host: bank.local' http://localhost/actuator/health
+curl -H 'Host: bank.local' http://localhost/customers
+```
+
+Resultado:
+
+- `ingress.networking.k8s.io/customer-service` creado.
+- `kubectl describe ingress customer-service` muestra `Address: localhost`.
+- `/actuator/health` responde `HTTP/1.1 200` con estado `UP`.
+- `/customers` responde `HTTP/1.1 200` con una lista JSON.
+
 ## Siguientes pendientes
 
-1. Agregar `Ingress` para `customer-service`.
-2. Mover Secrets sensibles fuera del repo para un flujo mas realista.
-3. Agregar Testcontainers con PostgreSQL real.
-4. Crear CI con `mvn test` y validacion de manifests.
-5. Implementar `account-service` como siguiente microservicio real.
+1. Mover Secrets sensibles fuera del repo para un flujo mas realista.
+2. Agregar Testcontainers con PostgreSQL real.
+3. Crear CI con `mvn test` y validacion de manifests.
+4. Implementar `account-service` como siguiente microservicio real.

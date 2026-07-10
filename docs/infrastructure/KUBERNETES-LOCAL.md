@@ -71,10 +71,31 @@ La configuracion del deployment esta separada en:
 - `secret.yaml` para usuario y password de base de datos.
 - `deployment.yaml` para la carga de trabajo y probes.
 - `service.yaml` para exponer el puerto dentro del cluster.
+- `ingress.yaml` para exponer rutas HTTP mediante `ingress-nginx`.
 
 Luego se valida con:
 
 ```bash
 kubectl get pods,svc,deploy
 k9s --context kind-laboratorio
+```
+
+## Ingress local
+
+El cluster local expone `ingress-nginx` en los puertos `80` y `443` del host. `customer-service` queda disponible con el host `bank.local` para:
+
+- `/customers`
+- `/actuator`
+
+Para usar el nombre local en el navegador o con `curl` sin headers, agregar en el host:
+
+```text
+127.0.0.1 bank.local
+```
+
+Validacion directa sin modificar `/etc/hosts`:
+
+```bash
+curl -H 'Host: bank.local' http://localhost/actuator/health
+curl -H 'Host: bank.local' http://localhost/customers
 ```

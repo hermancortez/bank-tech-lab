@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: customer-service
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: bank.local
+      http:
+        paths:
+          - path: /customers
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-service
+                port:
+                  number: 8081
+          - path: /actuator
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-service
+                port:
+                  number: 8081
