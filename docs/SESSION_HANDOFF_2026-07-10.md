@@ -31,6 +31,8 @@ Se agrego `CustomerControllerIntegrationTests` con cobertura para:
 - responder `404` cuando el cliente no existe
 - rechazar request invalido
 
+Las pruebas de integracion usan PostgreSQL real mediante Testcontainers. Para Docker Desktop/Docker 29 en WSL se fijo `api.version=1.44` en `src/test/resources/docker-java.properties`.
+
 ### Kubernetes
 
 - Se separo configuracion de `customer-service` en:
@@ -130,6 +132,5 @@ Resultado:
 
 ## Siguientes pendientes
 
-1. Agregar Testcontainers con PostgreSQL real.
-2. Crear CI con `mvn test` y validacion de manifests.
-3. Implementar `account-service` como siguiente microservicio real.
+1. Crear CI con `mvn test` y validacion de manifests.
+2. Implementar `account-service` como siguiente microservicio real.
