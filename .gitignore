@@ -1,2 +1,3 @@
 infra/kubernetes/customer-service/secret.yaml
 infra/kubernetes/account-service/secret.yaml
+infra/kubernetes/api-gateway/secret.yaml

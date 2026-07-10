@@ -208,3 +208,52 @@ Validaciones ejecutadas:
   - `GET /accounts`: OK.
   - `POST /accounts`: OK.
   - `POST /accounts/{id}/deposit`: balance actualizado a `60.00`.
+
+## Continuacion: seguridad api-gateway
+
+Se completo el punto 3: autenticacion/autorizacion basica en `api-gateway`.
+
+Cambios realizados:
+
+- Se agrego autenticacion por header `X-API-Key`.
+- Se definieron dos llaves logicas:
+  - `viewer`: permite lecturas (`GET`, `HEAD`, `OPTIONS`).
+  - `operator`: permite lecturas y escrituras (`POST`, `PUT`, `PATCH`, `DELETE`).
+- `/actuator/health` queda publico para probes de Kubernetes.
+- El gateway no reenvia `X-API-Key` a los servicios internos.
+- Se agregaron propiedades `gateway.auth.*` y variables de entorno:
+  - `GATEWAY_AUTH_ENABLED`
+  - `GATEWAY_AUTH_VIEWER_API_KEY`
+  - `GATEWAY_AUTH_OPERATOR_API_KEY`
+- Se agrego `api-gateway-secret` para Kubernetes local y `secret.yaml.example` versionado.
+- `infra/kubernetes/api-gateway/secret.yaml` queda ignorado por git.
+- Se actualizo documentacion de `api-gateway` y Kubernetes local.
+
+Validaciones ejecutadas:
+
+- `./mvnw test` en `backend-java/api-gateway`: 11 tests OK.
+- `./mvnw test` en `backend-java/customer-service`: 8 tests OK.
+- `./mvnw test` en `backend-java/account-service`: 12 tests OK.
+- `kubectl apply --dry-run=client --validate=false --recursive -f infra/kubernetes`: OK.
+- `git diff --check`: OK.
+- Se creo/actualizo secret local `api-gateway-secret` con llaves `dev-viewer-key` y `dev-operator-key`.
+- Rebuild de `api-gateway:local`, carga en Kind `laboratorio` y rollout de `deployment/api-gateway`: OK.
+- Estado runtime:
+  - `account-service`: `1/1 Running`.
+  - `customer-service`: `1/1 Running`.
+  - `api-gateway`: `1/1 Running`.
+  - Ingress unico publico: `api-gateway`, host `bank.local`, address `localhost`.
+- Flujo E2E por gateway `bank.local`:
+  - `GET /actuator/health` sin API key: `200 UP`.
+  - `GET /customers` sin API key: `401`.
+  - `GET /customers` con `dev-viewer-key`: `200`.
+  - `GET /accounts` con `dev-viewer-key`: `200`.
+  - `POST /accounts` con `dev-viewer-key`: `403`.
+  - `POST /accounts` con `dev-operator-key`: `201`.
+  - `POST /accounts/{id}/deposit` con `dev-operator-key`: `200`, balance `125.50`.
+
+Pendientes actualizados:
+
+1. Endurecer reglas de estado de cuenta para operaciones sobre cuentas bloqueadas o cerradas.
+2. Agregar auditoria/eventos para movimientos de cuenta.
+3. Reemplazar API keys estaticas por `auth-service`/JWT cuando se implemente identidad real.

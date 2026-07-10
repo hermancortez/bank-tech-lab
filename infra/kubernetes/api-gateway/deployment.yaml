@@ -21,6 +21,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: api-gateway-config
+            - secretRef:
+                name: api-gateway-secret
           livenessProbe:
             httpGet:
               path: /actuator/health

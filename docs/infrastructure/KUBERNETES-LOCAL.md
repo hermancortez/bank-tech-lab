@@ -106,11 +106,23 @@ Validacion directa sin modificar `/etc/hosts`:
 
 ```bash
 curl -H 'Host: bank.local' http://localhost/actuator/health
-curl -H 'Host: bank.local' http://localhost/customers
-curl -H 'Host: bank.local' http://localhost/accounts
-curl -H 'Host: bank.local' http://localhost/actuator/health
+curl -H 'Host: bank.local' -H 'X-API-Key: dev-viewer-key' http://localhost/customers
+curl -H 'Host: bank.local' -H 'X-API-Key: dev-viewer-key' http://localhost/accounts
 ```
 
 Con `api-gateway`, los paths publicos `/customers` y `/accounts` entran por
 `infra/kubernetes/api-gateway/ingress.yaml`. Los servicios internos se exponen
 solo via `ClusterIP`.
+
+El gateway protege `/customers/**` y `/accounts/**` con `X-API-Key`.
+Para el laboratorio local, crear el secret antes de desplegar:
+
+```bash
+kubectl create secret generic api-gateway-secret \
+  --from-literal=GATEWAY_AUTH_VIEWER_API_KEY=dev-viewer-key \
+  --from-literal=GATEWAY_AUTH_OPERATOR_API_KEY=dev-operator-key \
+  --dry-run=client -o yaml | kubectl apply -f -
+```
+
+Las lecturas aceptan la llave `viewer` u `operator`; las escrituras requieren
+la llave `operator`. `/actuator/health` queda publico para probes.

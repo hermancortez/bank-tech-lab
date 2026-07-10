@@ -20,6 +20,7 @@ import java.util.Set;
 public class ProxyController {
 
     private static final Set<String> HOP_BY_HOP_HEADERS = Set.of(
+            GatewayAuthenticationFilter.API_KEY_HEADER,
             "Keep-Alive",
             "Proxy-Authenticate",
             "Proxy-Authorization",

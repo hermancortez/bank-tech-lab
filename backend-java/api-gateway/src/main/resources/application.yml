@@ -5,6 +5,10 @@ gateway:
   routes:
     customer-service-url: ${GATEWAY_ROUTES_CUSTOMER_SERVICE_URL:http://localhost:8081}
     account-service-url: ${GATEWAY_ROUTES_ACCOUNT_SERVICE_URL:http://localhost:8082}
+  auth:
+    enabled: ${GATEWAY_AUTH_ENABLED:true}
+    viewer-api-key: ${GATEWAY_AUTH_VIEWER_API_KEY:}
+    operator-api-key: ${GATEWAY_AUTH_OPERATOR_API_KEY:}
 
 management:
   endpoint:

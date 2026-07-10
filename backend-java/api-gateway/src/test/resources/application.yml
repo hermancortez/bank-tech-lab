@@ -2,3 +2,7 @@ gateway:
   routes:
     customer-service-url: http://customer-service:8081
     account-service-url: http://account-service:8082
+  auth:
+    enabled: true
+    viewer-api-key: viewer-test-key
+    operator-api-key: operator-test-key
