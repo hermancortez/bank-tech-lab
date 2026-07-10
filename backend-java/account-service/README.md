@@ -15,6 +15,10 @@ POST /accounts
 GET /accounts
 GET /accounts/{id}
 GET /accounts/customer/{customerId}
+POST /accounts/{id}/deposit
+POST /accounts/{id}/withdraw
+POST /accounts/{id}/block
+POST /accounts/{id}/close
 ```
 
 ## Stack

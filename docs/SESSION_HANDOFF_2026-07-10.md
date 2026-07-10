@@ -150,4 +150,28 @@ Resultado:
 ## Siguientes pendientes
 
 1. Evaluar API Gateway para enrutar `customers` y `accounts`.
-2. Agregar endpoints transaccionales de cuenta, como debito/credito/bloqueo.
+2. Endurecer reglas de estado de cuenta para operaciones sobre cuentas bloqueadas o cerradas.
+3. Agregar auditoria/eventos para movimientos de cuenta.
+
+## Continuacion: account-service transaccional
+
+Se agregaron endpoints transaccionales en `account-service`:
+
+- `POST /accounts/{id}/deposit`
+- `POST /accounts/{id}/withdraw`
+- `POST /accounts/{id}/block`
+- `POST /accounts/{id}/close`
+
+Validaciones ejecutadas:
+
+- `./mvnw test -DskipTests=false` en `backend-java/account-service`: 12 tests OK.
+- `./mvnw test -DskipTests=false` en `backend-java/customer-service`: 8 tests OK.
+- `kubectl apply --dry-run=client --validate=false --recursive -f infra/kubernetes`: OK.
+- `git diff --check`: OK.
+- Rebuild de `account-service:local`, carga en Kind `laboratorio` y rollout de `deployment/account-service`: OK.
+- Flujo E2E por Ingress `bank.local`:
+  - crear cuenta: OK.
+  - depositar `25.50`: balance `125.50`.
+  - retirar `10.00`: balance `115.50`.
+  - bloquear: status `BLOCKED`.
+  - cerrar: status `CLOSED`.

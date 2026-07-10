@@ -121,6 +121,70 @@ class AccountControllerIntegrationTests extends AbstractIntegrationTest {
     }
 
     @Test
+    void creditsAccountBalance() throws Exception {
+        UUID customerId = UUID.randomUUID();
+        String id = createAccount(customerId, "ACC-0008");
+
+        mockMvc.perform(post("/accounts/{id}/deposit", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "amount": 25.50
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.balance").value(35.50));
+    }
+
+    @Test
+    void debitsAccountBalanceWhenFundsAvailable() throws Exception {
+        UUID customerId = UUID.randomUUID();
+        String id = createAccount(customerId, "ACC-0009");
+
+        mockMvc.perform(post("/accounts/{id}/withdraw", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "amount": 10.00
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.balance").value(0.00));
+    }
+
+    @Test
+    void rejectsDebitWhenFundsInsufficient() throws Exception {
+        UUID customerId = UUID.randomUUID();
+        String id = createAccount(customerId, "ACC-0010");
+
+        mockMvc.perform(post("/accounts/{id}/withdraw", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "amount": 100.01
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("Insufficient funds for withdrawal"));
+    }
+
+    @Test
+    void blocksAndClosesAccount() throws Exception {
+        UUID customerId = UUID.randomUUID();
+        String id = createAccount(customerId, "ACC-0011");
+
+        mockMvc.perform(post("/accounts/{id}/block", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("BLOCKED"));
+
+        mockMvc.perform(post("/accounts/{id}/close", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CLOSED"));
+    }
+
+    @Test
     void rejectsInvalidRequest() throws Exception {
         mockMvc.perform(post("/accounts")
                         .contentType(MediaType.APPLICATION_JSON)

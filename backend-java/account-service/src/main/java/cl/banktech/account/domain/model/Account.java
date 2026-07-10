@@ -64,6 +64,25 @@ public class Account {
         return balance;
     }
 
+    public Account deposit(BigDecimal amount) {
+        return new Account(id, customerId, accountNumber, type, balance.add(amount), status, createdAt);
+    }
+
+    public Account withdraw(BigDecimal amount) {
+        if (balance.compareTo(amount) < 0) {
+            throw new InsufficientFundsException();
+        }
+        return new Account(id, customerId, accountNumber, type, balance.subtract(amount), status, createdAt);
+    }
+
+    public Account block() {
+        return new Account(id, customerId, accountNumber, type, balance, AccountStatus.BLOCKED, createdAt);
+    }
+
+    public Account close() {
+        return new Account(id, customerId, accountNumber, type, balance, AccountStatus.CLOSED, createdAt);
+    }
+
     public AccountStatus getStatus() {
         return status;
     }

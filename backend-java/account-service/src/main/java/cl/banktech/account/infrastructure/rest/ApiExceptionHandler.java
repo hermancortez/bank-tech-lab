@@ -2,6 +2,7 @@ package cl.banktech.account.infrastructure.rest;
 
 import cl.banktech.account.domain.model.AccountNotFoundException;
 import cl.banktech.account.domain.model.DuplicateAccountException;
+import cl.banktech.account.domain.model.InsufficientFundsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,5 +25,10 @@ public class ApiExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ProblemDetail invalid(MethodArgumentNotValidException exception) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Invalid request fields");
+    }
+
+    @ExceptionHandler(InsufficientFundsException.class)
+    ProblemDetail insufficientFunds(InsufficientFundsException exception) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
     }
 }
